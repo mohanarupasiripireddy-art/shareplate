@@ -1,0 +1,972 @@
+<index html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SharePlate AP - Surplus Food Redistribution & Privacy Security</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for standard icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="h-full bg-slate-50 text-slate-800 flex flex-col font-sans antialiased">
+
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('feed')">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-white shadow-md shadow-emerald-500/20">
+                    <i class="fa-solid fa-utensils text-lg"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">SharePlate AP</span>
+                    <span class="block text-xs text-slate-400 font-medium tracking-wide">Andhra Pradesh Food Network</span>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <nav class="hidden lg:flex items-center space-x-1">
+                <button onclick="switchTab('feed')" id="nav-feed" class="px-3.5 py-2 rounded-lg text-sm font-medium text-emerald-700 bg-emerald-50 transition">
+                    <i class="fa-solid fa-bowl-food mr-1.5"></i>Surplus Food
+                </button>
+                <button onclick="switchTab('donate')" id="nav-donate" class="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-emerald-600 hover:bg-slate-50 transition">
+                    <i class="fa-solid fa-hand-holding-heart mr-1.5"></i>Donate Food
+                </button>
+                <button onclick="switchTab('farmers')" id="nav-farmers" class="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-emerald-600 hover:bg-slate-50 transition">
+                    <i class="fa-solid fa-wheat-awn mr-1.5"></i>Farmers Direct
+                </button>
+                <button onclick="switchTab('nutrition')" id="nav-nutrition" class="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-emerald-600 hover:bg-slate-50 transition">
+                    <i class="fa-solid fa-heart-pulse mr-1.5"></i>Nutrition & Health
+                </button>
+                <button onclick="switchTab('privacy')" id="nav-privacy" class="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-emerald-600 hover:bg-slate-50 transition">
+                    <i class="fa-solid fa-shield-halved mr-1.5"></i>Privacy & Security
+                </button>
+                <button onclick="switchTab('impact')" id="nav-impact" class="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-emerald-600 hover:bg-slate-50 transition">
+                    <i class="fa-solid fa-chart-line mr-1.5"></i>Impact & Stats
+                </button>
+            </nav>
+
+            <!-- Location Selector & User Role Profile Button -->
+            <div class="flex items-center space-x-3">
+                <button onclick="openLocationModal()" class="flex items-center space-x-1.5 bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-xl transition text-xs font-semibold">
+                    <i class="fa-solid fa-location-dot text-rose-500 animate-bounce"></i>
+                    <span id="current-location-text">Vijayawada</span>
+                    <i class="fa-solid fa-chevron-down text-[10px] text-emerald-600 ml-1"></i>
+                </button>
+
+                <button onclick="shareAppPlatform()" class="flex items-center space-x-1.5 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl transition text-xs font-semibold shadow-sm" title="Share App Link">
+                    <i class="fa-solid fa-share-nodes"></i>
+                    <span class="hidden sm:inline">Share Link</span>
+                </button>
+
+                <button onclick="openRoleModal()" class="p-2 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-700 transition relative" title="Switch Role">
+                    <i class="fa-solid fa-user-gear"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Bottom / Top Navigation Bar -->
+        <div class="flex lg:hidden overflow-x-auto border-t border-slate-100 bg-slate-50/80 px-2 py-1 space-x-1 text-xs">
+            <button onclick="switchTab('feed')" class="px-3 py-1.5 rounded-lg whitespace-nowrap text-slate-700 font-medium"><i class="fa-solid fa-bowl-food mr-1"></i>Feed</button>
+            <button onclick="switchTab('donate')" class="px-3 py-1.5 rounded-lg whitespace-nowrap text-slate-700 font-medium"><i class="fa-solid fa-plus-circle mr-1"></i>Donate</button>
+            <button onclick="switchTab('farmers')" class="px-3 py-1.5 rounded-lg whitespace-nowrap text-slate-700 font-medium"><i class="fa-solid fa-wheat-awn mr-1"></i>Farmers</button>
+            <button onclick="switchTab('nutrition')" class="px-3 py-1.5 rounded-lg whitespace-nowrap text-slate-700 font-medium"><i class="fa-solid fa-heart-pulse mr-1"></i>Nutrition</button>
+            <button onclick="switchTab('privacy')" class="px-3 py-1.5 rounded-lg whitespace-nowrap text-slate-700 font-medium"><i class="fa-solid fa-shield-halved mr-1"></i>Security</button>
+            <button onclick="switchTab('impact')" class="px-3 py-1.5 rounded-lg whitespace-nowrap text-slate-700 font-medium"><i class="fa-solid fa-chart-line mr-1"></i>Impact</button>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-20">
+
+        <!-- TAB 1: AVAILABLE FOOD FEED -->
+        <section id="tab-feed" class="space-y-6">
+            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-emerald-900/90 via-teal-900/80 to-emerald-900/90 p-8 sm:p-12 text-white shadow-2xl">
+                <div class="relative z-10 max-w-2xl">
+                    <div class="flex flex-wrap items-center gap-2 mb-4">
+                        <span class="inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 backdrop-blur-md">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse mr-2"></span>Live Zero-Waste Network
+                        </span>
+                        <span id="active-location-badge" class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-white/10 text-emerald-100 border border-white/20 backdrop-blur-md">
+                            <i class="fa-solid fa-location-dot mr-1.5 text-rose-400"></i>Showing: Vijayawada
+                        </span>
+                    </div>
+                    <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight mb-4 leading-tight">Connecting Surplus Food across All Andhra Pradesh Districts</h1>
+                    <p class="text-emerald-100/90 text-base sm:text-lg mb-8 leading-relaxed">From Vijayawada, Visakhapatnam, and Tirupati to Guntur, Kakinada, and rural mandals—route excess food from caterers, function halls, and farms directly to community shelters securely.</p>
+                    <div class="flex flex-wrap gap-4">
+                        <button onclick="switchTab('donate')" class="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold text-sm hover:from-emerald-600 hover:to-teal-600 shadow-lg shadow-emerald-500/30 transition flex items-center">
+                            <i class="fa-solid fa-plus-circle mr-2 text-base"></i>List Surplus Food
+                        </button>
+                        <button onclick="switchTab('privacy')" class="px-6 py-3.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm transition backdrop-blur-md border border-white/20 flex items-center">
+                            <i class="fa-solid fa-shield-halved mr-2 text-emerald-300"></i>View Privacy & Security Policy
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters & Search Bar -->
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
+                <div class="relative w-full sm:w-80">
+                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                    </span>
+                    <input type="text" id="search-input" oninput="handleSearch()" placeholder="Search item, town, or neighborhood..." class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition">
+                </div>
+                <div class="flex items-center space-x-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
+                    <button onclick="filterCategory('All')" id="cat-All" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-600 text-white shadow-sm transition whitespace-nowrap">All Items</button>
+                    <button onclick="filterCategory('Cooked Meals')" id="cat-Cooked Meals" class="category-btn px-4 py-2 rounded-xl text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition whitespace-nowrap">Cooked Meals</button>
+                    <button onclick="filterCategory('Bakery & Snacks')" id="cat-Bakery & Snacks" class="category-btn px-4 py-2 rounded-xl text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition whitespace-nowrap">Bakery</button>
+                    <button onclick="filterCategory('Fresh Produce')" id="cat-Fresh Produce" class="category-btn px-4 py-2 rounded-xl text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition whitespace-nowrap">Produce</button>
+                    <button onclick="filterCategory('Packaged')" id="cat-Packaged" class="category-btn px-4 py-2 rounded-xl text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition whitespace-nowrap">Packaged</button>
+                </div>
+            </div>
+
+            <!-- Food Listings Grid -->
+            <div id="food-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Dynamically populated via JS -->
+            </div>
+        </section>
+
+        <!-- TAB 2: DONATE FOOD -->
+        <section id="tab-donate" class="hidden max-w-3xl mx-auto space-y-6">
+            <div class="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-sm space-y-6">
+                <div class="flex items-center space-x-4 border-b border-slate-100 pb-5">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-hand-holding-heart"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800">List Surplus Edible Food</h2>
+                        <p class="text-xs text-slate-500">Ensure food safety and assist community members in need securely.</p>
+                    </div>
+                </div>
+
+                <form id="donation-form" onsubmit="handleDonationSubmit(event)" class="space-y-5">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">AP City / District / Mandal</label>
+                            <input type="text" id="food-region" required placeholder="e.g. Vijayawada, Vizag, Tirupati..." class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Local Neighborhood / Landmark</label>
+                            <input type="text" id="food-location" required placeholder="e.g. MG Road, Benz Circle, RTC Complex" class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Food Item Description</label>
+                        <input type="text" id="food-title" required placeholder="e.g. 50 Plates Puri Sabzi & Halwa" class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500">
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Category</label>
+                            <select id="food-category" required class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500">
+                                <option value="Cooked Meals">Cooked Meals</option>
+                                <option value="Bakery & Snacks">Bakery & Snacks</option>
+                                <option value="Fresh Produce">Fresh Produce</option>
+                                <option value="Packaged">Packaged Goods</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Quantity (Servings/Kg)</label>
+                            <input type="text" id="food-quantity" required placeholder="e.g. Serves ~50 people" class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Safe Until / Pickup By</label>
+                            <input type="text" id="food-expiry" required placeholder="e.g. Today before 10 PM" class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Contact Number</label>
+                        <input type="text" id="food-contact" required placeholder="+91 98765 43210" class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500">
+                    </div>
+
+                    <div class="p-4 rounded-xl bg-amber-50 border border-amber-200/80 flex items-start space-x-3 text-xs text-amber-800">
+                        <i class="fa-solid fa-shield-halved text-amber-600 text-sm mt-0.5"></i>
+                        <p><strong>Food Safety & Data Security Guarantee:</strong> All donor contact details are securely masked and only shared with verified NGO receivers upon pickup confirmation under our strict Privacy Protocol.</p>
+                    </div>
+
+                    <button type="submit" class="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-lg shadow-emerald-600/20 transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>Broadcast Surplus Listing</span>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- TAB 3: FARMERS DIRECT & AGRITECH HUB -->
+        <section id="tab-farmers" class="hidden space-y-6">
+            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-900/90 via-emerald-900/80 to-amber-950/90 p-8 sm:p-10 text-white shadow-xl">
+                <div class="relative z-10 max-w-2xl">
+                    <span class="inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-400/30 mb-3 backdrop-blur-md">
+                        <i class="fa-solid fa-seedling mr-2"></i>Farmer Empowerment & Rural Direct Access
+                    </span>
+                    <h2 class="text-2xl sm:text-4xl font-extrabold mb-3 leading-tight">Direct Farmer Harvest Hub</h2>
+                    <p class="text-amber-100/90 text-sm sm:text-base mb-2">Connecting smallholder farmers from all districts directly with food banks, community kitchens, and local institutions securely.</p>
+                </div>
+            </div>
+
+            <div id="farmers-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Populated via JS -->
+            </div>
+        </section>
+
+        <!-- TAB 4: NUTRITION & AWARENESS HUB -->
+        <section id="tab-nutrition" class="hidden space-y-6">
+            <div class="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-sm space-y-6">
+                <div>
+                    <span class="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-rose-100 text-rose-700 inline-block mb-2">Zero Hunger Awareness</span>
+                    <h2 class="text-2xl font-bold text-slate-800">Nutritious Food Access & Community Education</h2>
+                    <p class="text-slate-500 text-sm mt-1">Combatting malnutrition across Indian towns requires balanced diet knowledge, safe food preservation practices, and community drives.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-slate-50 rounded-2xl overflow-hidden border border-slate-200/60 space-y-3 flex flex-col justify-between p-5">
+                        <h3 class="font-bold text-slate-800 text-base">Balanced Meal Standard (Thali Guide)</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">Ensure every redistributed meal supplies essential macronutrients: 50% grains/carbs, 30% pulses/proteins, and 20% micronutrient-rich vegetables.</p>
+                    </div>
+                    <div class="bg-slate-50 rounded-2xl overflow-hidden border border-slate-200/60 space-y-3 flex flex-col justify-between p-5">
+                        <h3 class="font-bold text-slate-800 text-base">Food Safety & Shelf-Life Protocol</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">Guidelines for hot cooked meals (maintain above 60°C or consume within 4 hours) and cold storage hygiene to guarantee safety for vulnerable groups.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 5: PRIVACY & SECURITY -->
+        <section id="tab-privacy" class="hidden space-y-6 max-w-4xl mx-auto">
+            <div class="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-10 shadow-sm space-y-8">
+                <div class="flex items-center space-x-4 border-b border-slate-100 pb-5">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800">Privacy & Data Security Policy</h2>
+                        <p class="text-xs text-slate-500">SharePlate AP Platform Compliance & Protection Guidelines</p>
+                    </div>
+                </div>
+
+                <!-- Privacy Sections -->
+                <div class="space-y-6 text-sm text-slate-700 leading-relaxed">
+                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200/60 space-y-2">
+                        <h3 class="font-bold text-slate-900 flex items-center text-base">
+                            <i class="fa-solid fa-user-shield text-emerald-600 mr-2.5"></i>1. Information We Collect & Use
+                        </h3>
+                        <p class="text-xs text-slate-600">
+                            SharePlate collects minimal information required to coordinate food redistribution effectively across Andhra Pradesh. This includes contact phone numbers, listing locations, and organization names provided voluntarily by food donors and verified NGO receivers. We never sell or share your personal data with third-party advertisers.
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200/60 space-y-2">
+                        <h3 class="font-bold text-slate-900 flex items-center text-base">
+                            <i class="fa-solid fa-lock text-emerald-600 mr-2.5"></i>2. Data Security & Encryption Standards
+                        </h3>
+                        <p class="text-xs text-slate-600">
+                            All communication channels and pickup coordination forms are secured with industry-standard TLS encryption. Donor phone numbers and exact pickup addresses are masked until a verified receiver confirms a secure pickup request, preventing unauthorized public scraping or spam.
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200/60 space-y-2">
+                        <h3 class="font-bold text-slate-900 flex items-center text-base">
+                            <i class="fa-solid fa-bowl-food text-emerald-600 mr-2.5"></i>3. Food Safety & Liability Compliance
+                        </h3>
+                        <p class="text-xs text-slate-600">
+                            In accordance with Indian Food Safety and Standards Authority (FSSAI) surplus food guidelines, donors attest that surplus meals are prepared under hygienic conditions. SharePlate acts strictly as a neutral technology bridge connecting donors with certified community volunteers and registered welfare shelters.
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200/60 space-y-2">
+                        <h3 class="font-bold text-slate-900 flex items-center text-base">
+                            <i class="fa-solid fa-user-gear text-emerald-600 mr-2.5"></i>4. Your Data Rights & Deletion
+                        </h3>
+                        <p class="text-xs text-slate-600">
+                            You retain full control over your active listings and profile data. At any time, you can remove food listings or request complete account data purging by contacting our state support desk in Vijayawada.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-between text-xs text-emerald-800">
+                    <div class="flex items-center space-x-2">
+                        <i class="fa-solid fa-circle-check text-emerald-600 text-sm"></i>
+                        <span>Platform Security Verified & Compliant for Andhra Pradesh</span>
+                    </div>
+                    <button onclick="showToast('Security certificate valid & active')" class="px-3 py-1.5 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition">Verify Status</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 6: IMPACT & STATS -->
+        <section id="tab-impact" class="hidden space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-bowl-food"></i>
+                    </div>
+                    <div>
+                        <p class="text-2xl font-black text-slate-800">145,200+</p>
+                        <p class="text-xs text-slate-500 font-medium">Meals Redistributed</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-2xl bg-teal-100 text-teal-600 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-map-location-dot"></i>
+                    </div>
+                    <div>
+                        <p class="text-2xl font-black text-slate-800">120+ Towns</p>
+                        <p class="text-xs text-slate-500 font-medium">Active AP Locations</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-store"></i>
+                    </div>
+                    <div>
+                        <p class="text-2xl font-black text-slate-800">580+</p>
+                        <p class="text-xs text-slate-500 font-medium">Donors & Caterers</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-hands-holding-child"></i>
+                    </div>
+                    <div>
+                        <p class="text-2xl font-black text-slate-800">110 NGOs</p>
+                        <p class="text-xs text-slate-500 font-medium">Partner Shelters</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- LOCATION SELECTOR MODAL -->
+    <div id="location-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl relative space-y-5 animate-in fade-in zoom-in duration-200 max-h-[90vh] overflow-y-auto">
+            <button onclick="closeLocationModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center text-lg">
+                    <i class="fa-solid fa-location-dot"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-slate-800">Select Any City, District or Town</h3>
+                    <p class="text-xs text-slate-500">Filter food listings & farmer harvests near you</p>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <div class="relative">
+                    <input type="text" id="custom-location-input" placeholder="Type any town or district in AP..." class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-slate-400 text-xs"></i>
+                </div>
+                <button onclick="setCustomLocation()" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs transition">Set Custom Location</button>
+            </div>
+
+            <div class="border-t border-slate-100 pt-3 space-y-3">
+                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Select Andhra Pradesh Cities & Towns</p>
+                
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    <button onclick="selectLocation('All Andhra Pradesh')" class="px-3 py-2 text-left rounded-xl bg-slate-50 hover:bg-emerald-50 hover:text-emerald-700 text-xs font-semibold text-slate-700 border border-slate-100 transition flex items-center justify-between col-span-2 sm:col-span-3">
+                        <span>🏛️ All Andhra Pradesh (Show All Locations)</span>
+                        <i class="fa-solid fa-chevron-right text-[10px] opacity-40"></i>
+                    </button>
+                    <button onclick="selectLocation('Vijayawada')" class="px-3 py-2 text-left rounded-xl bg-slate-50 hover:bg-emerald-50 hover:text-emerald-700 text-xs font-medium text-slate-700 border border-slate-100 transition">📍 Vijayawada</button>
+                    <button onclick="selectLocation('Visakhapatnam')" class="px-3 py-2 text-left rounded-xl bg-slate-50 hover:bg-emerald-50 hover:text-emerald-700 text-xs font-medium text-slate-700 border border-slate-100 transition">📍 Visakhapatnam</button>
+                    <button onclick="selectLocation('Tirupati')" class="px-3 py-2 text-left rounded-xl bg-slate-50 hover:bg-emerald-50 hover:text-emerald-700 text-xs font-medium text-slate-700 border border-slate-100 transition">📍 Tirupati</button>
+                    <button onclick="selectLocation('Guntur')" class="px-3 py-2 text-left rounded-xl bg-slate-50 hover:bg-emerald-50 hover:text-emerald-700 text-xs font-medium text-slate-700 border border-slate-100 transition">📍 Guntur</button>
+                    <button onclick="selectLocation('Kakinada')" class="px-3 py-2 text-left rounded-xl bg-slate-50 hover:bg-emerald-50 hover:text-emerald-700 text-xs font-medium text-slate-700 border border-slate-100 transition">📍 Kakinada</button>
+                    <button onclick="selectLocation('Kurnool')" class="px-3 py-2 text-left rounded-xl bg-slate-50 hover:bg-emerald-50 hover:text-emerald-700 text-xs font-medium text-slate-700 border border-slate-100 transition">📍 Kurnool</button>
+                    <button onclick="selectLocation('Nellore')" class="px-3 py-2 text-left rounded-xl bg-slate-50 hover:bg-emerald-50 hover:text-emerald-700 text-xs font-medium text-slate-700 border border-slate-100 transition">📍 Nellore</button>
+                    <button onclick="selectLocation('Rajahmundry')" class="px-3 py-2 text-left rounded-xl bg-slate-50 hover:bg-emerald-50 hover:text-emerald-700 text-xs font-medium text-slate-700 border border-slate-100 transition">📍 Rajahmundry</button>
+                    <button onclick="selectLocation('Anantapur')" class="px-3 py-2 text-left rounded-xl bg-slate-50 hover:bg-emerald-50 hover:text-emerald-700 text-xs font-medium text-slate-700 border border-slate-100 transition">📍 Anantapur</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail / Claim Modal -->
+    <div id="claim-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm hidden p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative space-y-6 animate-in fade-in zoom-in duration-200">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div id="modal-content" class="space-y-4">
+                <!-- Populated dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Role Switcher Modal -->
+    <div id="role-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm hidden p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative space-y-5">
+            <button onclick="closeRoleModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <h3 class="text-lg font-bold text-slate-800">Select Your User Perspective</h3>
+            <p class="text-xs text-slate-500">Choose how you want to interact with SharePlate:</p>
+            <div class="space-y-3">
+                <button onclick="setRole('Community Receiver / NGO')" class="w-full p-4 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/50 flex items-center justify-between transition text-left group">
+                    <div>
+                        <p class="text-sm font-semibold text-slate-800 group-hover:text-emerald-700">NGO / Receiver / Student</p>
+                        <p class="text-xs text-slate-500">Claim surplus food under secure data protocol</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-slate-400 text-xs"></i>
+                </button>
+                <button onclick="setRole('Food Donor (Restaurant/Mess)')" class="w-full p-4 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/50 flex items-center justify-between transition text-left group">
+                    <div>
+                        <p class="text-sm font-semibold text-slate-800 group-hover:text-emerald-700">Food Donor</p>
+                        <p class="text-xs text-slate-500">Restaurants, wedding halls, caterers listing surplus</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-slate-400 text-xs"></i>
+                </button>
+                <button onclick="setRole('Community Volunteer / Rider')" class="w-full p-4 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/50 flex items-center justify-between transition text-left group">
+                    <div>
+                        <p class="text-sm font-semibold text-slate-800 group-hover:text-emerald-700">Volunteer / Delivery Hero</p>
+                        <p class="text-xs text-slate-500">Transport surplus food with verified credentials</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-slate-400 text-xs"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="bg-slate-900 text-white px-5 py-3 rounded-xl shadow-xl flex items-center space-x-3 text-sm">
+            <i class="fa-solid fa-circle-check text-emerald-400"></i>
+            <span id="toast-msg">Action successful!</span>
+        </div>
+    </div>
+
+    <!-- SHARE APP MODAL -->
+    <div id="share-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl relative space-y-5 animate-in fade-in zoom-in duration-200">
+            <button onclick="closeShareModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-lg">
+                    <i class="fa-solid fa-share-nodes"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-slate-800">Share SharePlate AP</h3>
+                    <p class="text-xs text-slate-500">Help connect surplus food & farmers across Andhra Pradesh</p>
+                </div>
+            </div>
+
+            <div class="space-y-3 pt-2">
+                <a id="whatsapp-share-btn" href="#" target="_blank" class="w-full py-3 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-semibold text-xs transition flex items-center justify-center space-x-2">
+                    <i class="fa-brands fa-whatsapp text-base"></i>
+                    <span>Share via WhatsApp</span>
+                </a>
+                <a id="sms-share-btn" href="#" class="w-full py-3 px-4 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-semibold text-xs transition flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-comment-sms text-base"></i>
+                    <span>Share via SMS / Message</span>
+                </a>
+                <button onclick="copyShareLink()" class="w-full py-3 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs transition flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-copy text-base"></i>
+                    <span>Copy Link to Clipboard</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        let currentLocation = "Vijayawada";
+        let foodListings = [];
+        let farmerListings = [
+            {
+                id: 101,
+                region: "Guntur District",
+                farmerName: "Rama Rao (Guntur Chilli & Veg Collective)",
+                title: "250 kg Fresh Tomatoes & Green Chillies",
+                price: "₹16 / kg",
+                desc: "Direct farm harvest available for food shelters and community kitchens across Guntur & Vijayawada.",
+                image: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                id: 102,
+                region: "East Godavari (Rajahmundry)",
+                farmerName: "Subba Raju (Delta Organic Farmers)",
+                title: "350 kg Grade-A Sona Masoori Rice Grain",
+                price: "₹28 / kg",
+                desc: "Fresh paddy surplus direct from East Godavari district farmers.",
+                image: "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                id: 103,
+                region: "Anantapur",
+                farmerName: "Narayana Swamy (Rayalaseema Fruit Growers)",
+                title: "200 kg Fresh Sweet Oranges & Papayas",
+                price: "₹22 / kg",
+                desc: "Fresh fruit surplus for nutritional distribution in local shelters.",
+                image: "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&w=800&q=80"
+            }
+        ];
+
+        let currentCategory = 'All';
+        let searchQuery = '';
+        let db = null;
+        let auth = null;
+        let userId = null;
+        let appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+        async function initFirebase() {
+            try {
+                const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                userId = auth.currentUser?.uid || crypto.randomUUID();
+                console.log("Firebase initialized. User ID:", userId);
+                
+                loadInitialListings();
+            } catch (err) {
+                console.error("Firebase init failed, using local fallback", err);
+                loadDefaultListings();
+            }
+        }
+
+        function loadDefaultListings() {
+            foodListings = [
+                {
+                    id: 1,
+                    region: "Vijayawada",
+                    donorName: "Sri Kanya Convention Hall",
+                    donorType: "Wedding / Event Host",
+                    title: "70 Servings Veg Biryani, Bagara Rice & Kurma",
+                    category: "Cooked Meals",
+                    quantity: "Serves ~70 people",
+                    expiry: "Pickup within 2 hrs (By 10:30 PM)",
+                    location: "Benz Circle, Vijayawada",
+                    contact: "+91 98480 12345",
+                    timeAgo: "10 mins ago",
+                    status: "Available",
+                    image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=800&q=80"
+                },
+                {
+                    id: 2,
+                    region: "Visakhapatnam",
+                    donorName: "Vizag Food Court & Caterers",
+                    donorType: "Restaurant / Catering",
+                    title: "45 Portions Meals with Pulihora, Sambar & Curd Rice",
+                    category: "Cooked Meals",
+                    quantity: "Serves ~45 people",
+                    expiry: "Pickup before 10:45 PM",
+                    location: "Siripuram, Visakhapatnam",
+                    contact: "+91 98490 54321",
+                    timeAgo: "20 mins ago",
+                    status: "Available",
+                    image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=80"
+                }
+            ];
+            renderFoodFeed();
+            renderFarmerFeed();
+        }
+
+        function loadInitialListings() {
+            if (!db) {
+                loadDefaultListings();
+                return;
+            }
+            try {
+                const listingsRef = collection(db, 'artifacts', appId, 'public', 'data', 'food_listings');
+                onSnapshot(listingsRef, (snapshot) => {
+                    const remoteListings = [];
+                    snapshot.forEach(docSnap => {
+                        remoteListings.push({ id: docSnap.id, ...docSnap.data() });
+                    });
+                    if (remoteListings.length > 0) {
+                        foodListings = remoteListings.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                    } else {
+                        seedDefaultListings();
+                    }
+                    renderFoodFeed();
+                }, (error) => {
+                    console.error("Firestore error:", error);
+                    loadDefaultListings();
+                });
+            } catch (e) {
+                console.error("Error setting up snapshot:", e);
+                loadDefaultListings();
+            }
+            renderFarmerFeed();
+        }
+
+        async function seedDefaultListings() {
+            const defaults = [
+                {
+                    region: "Vijayawada",
+                    donorName: "Sri Kanya Convention Hall",
+                    donorType: "Wedding / Event Host",
+                    title: "70 Servings Veg Biryani, Bagara Rice & Kurma",
+                    category: "Cooked Meals",
+                    quantity: "Serves ~70 people",
+                    expiry: "Pickup within 2 hrs (By 10:30 PM)",
+                    location: "Benz Circle, Vijayawada",
+                    contact: "+91 98480 12345",
+                    timeAgo: "10 mins ago",
+                    status: "Available",
+                    createdAt: Date.now(),
+                    image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=800&q=80"
+                },
+                {
+                    region: "Visakhapatnam",
+                    donorName: "Vizag Food Court & Caterers",
+                    donorType: "Restaurant / Catering",
+                    title: "45 Portions Meals with Pulihora, Sambar & Curd Rice",
+                    category: "Cooked Meals",
+                    quantity: "Serves ~45 people",
+                    expiry: "Pickup before 10:45 PM",
+                    location: "Siripuram, Visakhapatnam",
+                    contact: "+91 98490 54321",
+                    timeAgo: "20 mins ago",
+                    status: "Available",
+                    createdAt: Date.now() - 60000,
+                    image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=80"
+                }
+            ];
+            for (let item of defaults) {
+                try {
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'food_listings'), item);
+                } catch(err) {
+                    console.error("Seed error:", err);
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initFirebase();
+            renderFarmerFeed();
+        });
+
+        function switchTab(tabId) {
+            ['feed', 'donate', 'farmers', 'nutrition', 'privacy', 'impact'].forEach(t => {
+                const tabEl = document.getElementById(`tab-${t}`);
+                if (tabEl) tabEl.classList.add('hidden');
+            });
+            const target = document.getElementById(`tab-${tabId}`);
+            if (target) target.classList.remove('hidden');
+        }
+
+        function openLocationModal() { document.getElementById('location-modal').classList.remove('hidden'); }
+        function closeLocationModal() { document.getElementById('location-modal').classList.add('hidden'); }
+
+        function selectLocation(region) {
+            currentLocation = region;
+            updateLocationUI();
+            closeLocationModal();
+            showToast(`Location set to ${region}`);
+            renderFoodFeed();
+            renderFarmerFeed();
+        }
+
+        function setCustomLocation() {
+            const input = document.getElementById('custom-location-input').value.trim();
+            if (input) {
+                selectLocation(input);
+                document.getElementById('custom-location-input').value = '';
+            }
+        }
+
+        function updateLocationUI() {
+            document.getElementById('current-location-text').innerText = currentLocation;
+            document.getElementById('active-location-badge').innerHTML = `<i class="fa-solid fa-location-dot mr-1.5 text-rose-400"></i>Showing: ${currentLocation}`;
+        }
+
+        function renderFoodFeed() {
+            const grid = document.getElementById('food-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            let filtered = foodListings.filter(item => {
+                const matchesLoc = (currentLocation === 'All Andhra Pradesh') || 
+                                   (item.region && item.region.toLowerCase().includes(currentLocation.toLowerCase())) || 
+                                   (item.location && item.location.toLowerCase().includes(currentLocation.toLowerCase()));
+                const matchesCat = currentCategory === 'All' || item.category === currentCategory;
+                const matchesSearch = !searchQuery || 
+                                      (item.title && item.title.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                                      (item.donorName && item.donorName.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                                      (item.location && item.location.toLowerCase().includes(searchQuery.toLowerCase()));
+                return matchesLoc && matchesCat && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full py-16 text-center bg-white rounded-3xl border border-slate-200">
+                        <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                            <i class="fa-solid fa-location-crosshairs"></i>
+                        </div>
+                        <h3 class="text-base font-semibold text-slate-700">No surplus food listings in ${currentLocation} right now</h3>
+                        <button onclick="selectLocation('All Andhra Pradesh')" class="mt-4 px-4 py-2 rounded-xl bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700 transition">View All AP Locations</button>
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-lg transition duration-200 overflow-hidden flex flex-col justify-between group";
+                card.innerHTML = `
+                    <div>
+                        <div class="h-44 relative overflow-hidden">
+                            <img src="${item.image || 'https://placehold.co/800x600/10b981/ffffff?text=Surplus+Food'}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                            <div class="absolute top-3 left-3 right-3 flex items-center justify-between">
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-white/90 backdrop-blur-md text-emerald-800 uppercase tracking-wider">${item.category}</span>
+                                <span class="text-xs font-semibold text-white bg-black/40 px-2.5 py-1 rounded-lg backdrop-blur-md">${item.timeAgo || 'Just now'}</span>
+                            </div>
+                            <div class="absolute bottom-3 left-3 right-3 text-white">
+                                <p class="text-[11px] font-medium text-emerald-300 uppercase tracking-wide">${item.donorType || 'Donor'}</p>
+                                <h3 class="text-base font-bold truncate">${item.donorName}</h3>
+                            </div>
+                        </div>
+                        <div class="p-5 space-y-3">
+                            <h4 class="font-semibold text-slate-800 text-base leading-snug">${item.title}</h4>
+                            <div class="space-y-2 text-xs text-slate-500">
+                                <div class="flex items-center"><i class="fa-solid fa-box-open w-4 text-emerald-600 mr-2"></i><span class="font-semibold text-slate-700">${item.quantity}</span></div>
+                                <div class="flex items-center"><i class="fa-solid fa-hourglass-half w-4 text-amber-500 mr-2"></i><span>${item.expiry}</span></div>
+                                <div class="flex items-center"><i class="fa-solid fa-location-dot w-4 text-rose-500 mr-2"></i><span class="truncate">${item.location}</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-5 pt-0">
+                        <button onclick="openClaimModal('${item.id}')" class="w-full py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white font-semibold text-xs transition flex items-center justify-center space-x-2 border border-emerald-100">
+                            <i class="fa-solid fa-hand-holding-heart"></i>
+                            <span>Claim / Coordinate Pickup</span>
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function renderFarmerFeed() {
+            const grid = document.getElementById('farmers-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            farmerListings.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm p-5 space-y-3 flex flex-col justify-between";
+                card.innerHTML = `
+                    <div class="space-y-3">
+                        <div class="h-36 rounded-xl overflow-hidden relative">
+                            <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover">
+                            <span class="absolute bottom-2 right-2 bg-black/80 text-emerald-300 font-bold px-2.5 py-1 rounded-lg text-xs">${item.price}</span>
+                        </div>
+                        <span class="text-[10px] font-bold text-amber-600 uppercase tracking-wider">${item.region}</span>
+                        <h3 class="font-bold text-slate-800 text-sm">${item.title}</h3>
+                        <p class="text-xs text-slate-500">${item.desc}</p>
+                    </div>
+                    <button onclick="showToast('Requested direct harvest dispatch from ${item.farmerName}')" class="w-full py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-semibold transition">Request Farm Harvest</button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.className = "category-btn px-4 py-2 rounded-xl text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition whitespace-nowrap";
+            });
+            const active = document.getElementById(`cat-${cat}`);
+            if (active) active.className = "category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-600 text-white shadow-sm transition whitespace-nowrap";
+            renderFoodFeed();
+        }
+
+        function handleSearch() {
+            searchQuery = document.getElementById('search-input').value;
+            renderFoodFeed();
+        }
+
+        function openClaimModal(id) {
+            const item = foodListings.find(i => i.id == id);
+            if (!item) return;
+            document.getElementById('modal-content').innerHTML = `
+                <h3 class="text-base font-bold text-slate-800">Secure Pickup Coordination</h3>
+                <p class="text-xs text-slate-500">Item: <strong>${item.title}</strong></p>
+                <p class="text-xs text-slate-500">Donor: <strong>${item.donorName} (${item.location})</strong></p>
+                <p class="text-xs text-slate-500">Contact: <strong>${item.contact}</strong> (Secured under Privacy Protocol)</p>
+                <div class="space-y-2 pt-2">
+                    <label class="block text-xs font-semibold text-slate-700">Enter NGO / Receiver Organization Name</label>
+                    <input type="text" id="receiver-org" placeholder="e.g. Helping Hands Shelter" class="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none">
+                    <button onclick="confirmClaim('${item.id}')" class="w-full py-3 bg-emerald-600 text-white rounded-xl font-bold text-xs hover:bg-emerald-700">Confirm Secure Pickup</button>
+                </div>
+            `;
+            document.getElementById('claim-modal').classList.remove('hidden');
+        }
+
+        function closeModal() { document.getElementById('claim-modal').classList.add('hidden'); }
+
+        function confirmClaim(id) {
+            closeModal();
+            showToast("Pickup confirmed! Contact details verified.");
+        }
+
+        async function handleDonationSubmit(e) {
+            e.preventDefault();
+            const newListing = {
+                region: document.getElementById('food-region').value || "Vijayawada",
+                donorName: "Verified Community Donor",
+                donorType: "Community Host",
+                title: document.getElementById('food-title').value,
+                category: document.getElementById('food-category').value,
+                quantity: document.getElementById('food-quantity').value,
+                expiry: document.getElementById('food-expiry').value,
+                location: `${document.getElementById('food-location').value}, ${document.getElementById('food-region').value}`,
+                contact: document.getElementById('food-contact').value,
+                timeAgo: "Just now",
+                status: "Available",
+                createdAt: Date.now(),
+                image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=800&q=80"
+            };
+
+            if (db) {
+                try {
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'food_listings'), newListing);
+                    showToast("Surplus listing broadcasted securely to Firestore!");
+                } catch (err) {
+                    console.error("Error adding document:", err);
+                    showToast("Error broadcasting listing.");
+                }
+            } else {
+                foodListings.unshift({ id: Date.now(), ...newListing });
+                renderFoodFeed();
+                showToast("Surplus listing broadcasted successfully!");
+            }
+
+            document.getElementById('donation-form').reset();
+            switchTab('feed');
+        }
+
+        function openRoleModal() { document.getElementById('role-modal').classList.remove('hidden'); }
+        function closeRoleModal() { document.getElementById('role-modal').classList.add('hidden'); }
+
+        function setRole(role) {
+            closeRoleModal();
+            showToast(`Role perspective switched to: ${role}`);
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        function shareAppPlatform() {
+            const currentUrl = (window.location.protocol.startsWith('http')) ? window.location.href.split('#')[0] : 'https://shareplate-ap.web.app';
+            const shareText = `Join SharePlate AP to redistribute surplus food and support farmers across Andhra Pradesh! Connect with local donors, food banks, and community shelters securely. Check it out here: ${currentUrl}`;
+
+            if (navigator.share && window.location.protocol.startsWith('http')) {
+                navigator.share({
+                    title: 'SharePlate AP',
+                    text: 'Join SharePlate AP to redistribute surplus food and support farmers across Andhra Pradesh!',
+                    url: currentUrl
+                }).then(() => {
+                    showToast("Shared successfully!");
+                }).catch((error) => {
+                    console.log('Share canceled or not supported', error);
+                });
+            } else {
+                const encodedText = encodeURIComponent(shareText);
+                document.getElementById('whatsapp-share-btn').href = `https://api.whatsapp.com/send?text=${encodedText}`;
+                document.getElementById('sms-share-btn').href = `sms:?body=${encodedText}`;
+                
+                document.getElementById('share-modal').classList.remove('hidden');
+            }
+        }
+
+        function closeShareModal() {
+            document.getElementById('share-modal').classList.add('hidden');
+        }
+
+        function copyShareLink() {
+            const currentUrl = (window.location.protocol.startsWith('http')) ? window.location.href.split('#')[0] : 'SharePlate AP App';
+            const shareText = `Join SharePlate AP to redistribute surplus food and support farmers across Andhra Pradesh! Connect with local donors, food banks, and community shelters securely. ${currentUrl}`;
+            
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(shareText).then(() => {
+                    closeShareModal();
+                    showToast("Platform invite text copied to clipboard!");
+                }).catch(() => {
+                    fallbackCopy(shareText);
+                });
+            } else {
+                fallbackCopy(shareText);
+            }
+        }
+
+        function fallbackCopy(text) {
+            const tempInput = document.createElement('textarea');
+            document.body.appendChild(tempInput);
+            tempInput.value = text;
+            tempInput.select();
+            try {
+                document.execCommand('copy');
+                closeShareModal();
+                showToast("Platform invite text copied to clipboard!");
+            } catch (err) {
+                showToast("Unable to copy text automatically.");
+            }
+            document.body.removeChild(tempInput);
+        }
+
+        // Expose functions globally for inline HTML event handlers
+        window.switchTab = switchTab;
+        window.openLocationModal = openLocationModal;
+        window.closeLocationModal = closeLocationModal;
+        window.selectLocation = selectLocation;
+        window.setCustomLocation = setCustomLocation;
+        window.filterCategory = filterCategory;
+        window.handleSearch = handleSearch;
+        window.openClaimModal = openClaimModal;
+        window.closeModal = closeModal;
+        window.confirmClaim = confirmClaim;
+        window.handleDonationSubmit = handleDonationSubmit;
+        window.openRoleModal = openRoleModal;
+        window.closeRoleModal = closeRoleModal;
+        window.setRole = setRole;
+        window.showToast = showToast;
+        window.shareAppPlatform = shareAppPlatform;
+        window.closeShareModal = closeShareModal;
+        window.copyShareLink = copyShareLink;
+    </script>
+</body>
+</html>
